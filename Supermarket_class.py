@@ -39,3 +39,6 @@ class wares_data(object):
 class stream_data(object):
     def __init__(self, ware_id, state, amount, left):
         pass
+
+
+# Test
