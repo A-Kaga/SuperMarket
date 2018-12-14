@@ -4,6 +4,9 @@ import pymysql
 class wares_data(object):
     def __init__(self, ware_id, name, amount, max_amount, min_amount, purchase_price, sell_price, unit, scale):
         # ATTENTION! Change the function before change the class attributes!
+        db = connect_database()
+        cursor = db.cursor()
+        # data = [ware_id, name, amount, max_amount, min_amount, purchase_price, sell_price, unit, scale]
         self.ware_id = ware_id
         self.name = name
         self.amount = amount
@@ -13,6 +16,14 @@ class wares_data(object):
         self.sell_price = sell_price
         self.unit = unit
         self.scale = scale
+
+        insert_sql = 'INSERT INTO WARE_DATA (ware_id,name,amount,max_amount,min_amount,purchase_price,sell_price,unit,scale) VALUES ("%s","%s","%s","%s","%s","%s","%s","%s","%s")'\
+                     % (ware_id, name, amount, max_amount, min_amount, purchase_price, sell_price, unit, scale)
+        cursor.execute(insert_sql)
+        db.commit()
+        cursor.close()
+        db.close()
+
     
     # alter functions are inefficient
     def alter_id(self, ware_id):
@@ -41,4 +52,29 @@ class stream_data(object):
         pass
 
 
-# Maybe Test
+def connect_database():
+    # my_id = input('User Account: ')
+    # my_password = input('Password: ')
+    return pymysql.connect(host='localhost',
+                           port=3306,
+                           user='root',
+                           password='ctj20100030928',
+                           database='supermarket')
+
+
+def test():
+    db = connect_database()
+    cursor = db.cursor()
+    search_sql = 'SELECT * FROM WARE_DATA'
+    cursor.execute(search_sql)
+    results = cursor.fetchone()
+    if results is None:
+        print("查询为空")
+    else:
+        print(results)    
+    cursor.close()
+    db.close()
+
+
+ware = wares_data(1, 'AKaga', 100, 1000, 1, 10, 100, 'kg', 100)
+test()
