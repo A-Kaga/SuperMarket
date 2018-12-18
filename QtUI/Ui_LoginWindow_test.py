@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'e:\SuperMarket\QtUI\LoginWindow_test.ui'
+# Form implementation generated from reading ui file 'e:\SuperMarket\QtUI\UI\LoginWindow_test.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -20,22 +20,22 @@ class Ui_LoginWindow(object):
         self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
         self.textBrowser.setGeometry(QtCore.QRect(150, 50, 481, 81))
         self.textBrowser.setObjectName("textBrowser")
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(200, 220, 361, 91))
-        self.widget.setObjectName("widget")
-        self.gridLayout = QtWidgets.QGridLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
+        self.layoutWidget.setGeometry(QtCore.QRect(200, 220, 361, 91))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
-        self.Login_Label_UserName = QtWidgets.QLabel(self.widget)
+        self.Login_Label_UserName = QtWidgets.QLabel(self.layoutWidget)
         self.Login_Label_UserName.setObjectName("Login_Label_UserName")
         self.gridLayout.addWidget(self.Login_Label_UserName, 0, 0, 1, 1)
-        self.Login_LineEdit_UserName = QtWidgets.QLineEdit(self.widget)
+        self.Login_LineEdit_UserName = QtWidgets.QLineEdit(self.layoutWidget)
         self.Login_LineEdit_UserName.setObjectName("Login_LineEdit_UserName")
         self.gridLayout.addWidget(self.Login_LineEdit_UserName, 0, 1, 1, 1)
-        self.Login_Label_Password = QtWidgets.QLabel(self.widget)
+        self.Login_Label_Password = QtWidgets.QLabel(self.layoutWidget)
         self.Login_Label_Password.setObjectName("Login_Label_Password")
         self.gridLayout.addWidget(self.Login_Label_Password, 1, 0, 1, 1)
-        self.Login_LineEdit_Password = QtWidgets.QLineEdit(self.widget)
+        self.Login_LineEdit_Password = QtWidgets.QLineEdit(self.layoutWidget)
         self.Login_LineEdit_Password.setObjectName("Login_LineEdit_Password")
         self.gridLayout.addWidget(self.Login_LineEdit_Password, 1, 1, 1, 1)
         LoginWindow.setCentralWidget(self.centralwidget)
@@ -51,7 +51,6 @@ class Ui_LoginWindow(object):
         self.menubar.addAction(self.menuSuperMarket_Management_System.menuAction())
 
         self.retranslateUi(LoginWindow)
-        self.Login_PushButton_Submit.clicked.connect(LoginWindow.close)
         QtCore.QMetaObject.connectSlotsByName(LoginWindow)
         LoginWindow.setTabOrder(self.Login_LineEdit_UserName, self.Login_LineEdit_Password)
         LoginWindow.setTabOrder(self.Login_LineEdit_Password, self.Login_PushButton_Submit)

@@ -1,10 +1,11 @@
 import pymysql
+import function
 
 
 class wares_data(object):
     def __init__(self, ware_id, name, amount, max_amount, min_amount, purchase_price, sell_price, unit, scale):
         # ATTENTION! Change the function before change the class attributes!
-        db = connect_database()
+        db = function.connect_database()
         cursor = db.cursor()
         # data = [ware_id, name, amount, max_amount, min_amount, purchase_price, sell_price, unit, scale]
         self.ware_id = ware_id
@@ -52,6 +53,7 @@ class stream_data(object):
         pass
 
 
+'''
 def connect_database():
     # my_id = input('User Account: ')
     # my_password = input('Password: ')
@@ -60,10 +62,11 @@ def connect_database():
                            user='root',
                            password='ctj20100030928',
                            database='supermarket')
+'''
 
 
 def test():
-    db = connect_database()
+    db = function.connect_database()
     cursor = db.cursor()
     search_sql = 'SELECT * FROM WARE_DATA'
     cursor.execute(search_sql)
