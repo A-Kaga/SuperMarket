@@ -102,5 +102,22 @@ p, li { white-space: pre-wrap; }
   <tabstop>Login_PushButton_Submit</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>Login_PushButton_Submit</sender>
+   <signal>clicked()</signal>
+   <receiver>LoginWindow</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>375</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>434</x>
+     <y>517</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

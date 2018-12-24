@@ -1,7 +1,9 @@
 import sys
 import function
 from PyQt5.QtWidgets import QApplication, QMainWindow
-from QtUI.Ui_LoginWindow_test import *
+from QtUI.Ui_LoginWindow import *
+
+import LoginErrorWin
 
 '''
 Login Account
@@ -28,6 +30,7 @@ class LoginWindow(QMainWindow, Ui_LoginWindow):
         if str(result[0]) == str(password):
             self.close()
         else:
+            FunctionWin.ShwoWin()
             self.Login_LineEdit_UserName.clear()
             self.Login_LineEdit_Password.clear()
 

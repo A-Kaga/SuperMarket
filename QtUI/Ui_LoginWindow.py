@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_LoginWindow(object):
     def setupUi(self, LoginWindow):
         LoginWindow.setObjectName("LoginWindow")
-        LoginWindow.resize(800, 600)
+        LoginWindow.resize(768, 600)
         self.centralwidget = QtWidgets.QWidget(LoginWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.Login_PushButton_Submit = QtWidgets.QPushButton(self.centralwidget)
@@ -40,7 +40,7 @@ class Ui_LoginWindow(object):
         self.gridLayout.addWidget(self.Login_LineEdit_Password, 1, 1, 1, 1)
         LoginWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(LoginWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 768, 26))
         self.menubar.setObjectName("menubar")
         self.menuSuperMarket_Management_System = QtWidgets.QMenu(self.menubar)
         self.menuSuperMarket_Management_System.setObjectName("menuSuperMarket_Management_System")
@@ -51,13 +51,14 @@ class Ui_LoginWindow(object):
         self.menubar.addAction(self.menuSuperMarket_Management_System.menuAction())
 
         self.retranslateUi(LoginWindow)
+        self.Login_PushButton_Submit.clicked.connect(LoginWindow.show)
         QtCore.QMetaObject.connectSlotsByName(LoginWindow)
         LoginWindow.setTabOrder(self.Login_LineEdit_UserName, self.Login_LineEdit_Password)
         LoginWindow.setTabOrder(self.Login_LineEdit_Password, self.Login_PushButton_Submit)
 
     def retranslateUi(self, LoginWindow):
         _translate = QtCore.QCoreApplication.translate
-        LoginWindow.setWindowTitle(_translate("LoginWindow", "MainWindow"))
+        LoginWindow.setWindowTitle(_translate("LoginWindow", "登录窗口"))
         self.Login_PushButton_Submit.setText(_translate("LoginWindow", "提交"))
         self.textBrowser.setHtml(_translate("LoginWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
