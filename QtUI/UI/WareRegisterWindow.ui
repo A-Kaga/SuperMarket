@@ -60,13 +60,22 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>160</y>
-      <width>351</width>
-      <height>271</height>
+      <x>240</x>
+      <y>150</y>
+      <width>321</width>
+      <height>281</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="ID_LineEdit"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="Format_LineEdit"/>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLineEdit" name="SellPrice_LineEdit"/>
+     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="Name_Label">
        <property name="text">
@@ -74,8 +83,19 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="Name_LineEdit"/>
+     <item row="4" column="0">
+      <widget class="QLabel" name="PurchPrice_Label">
+       <property name="text">
+        <string>进   价</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="MaxStock_Label">
+       <property name="text">
+        <string>最大库存</string>
+       </property>
+      </widget>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="ID_Label">
@@ -84,8 +104,31 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="ID_LineEdit"/>
+     <item row="3" column="1">
+      <widget class="QSpinBox" name="Quantity_SpinBox"/>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="PurchasePrice_LineEdit"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="SellPrice_Label">
+       <property name="text">
+        <string>售   价</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QSpinBox" name="MaxStock_SpinBox"/>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="MinStock_Label">
+       <property name="text">
+        <string>最小库存</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QSpinBox" name="MinStock_SpinBox"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="Format_Label">
@@ -94,9 +137,6 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="Format_LineEdit"/>
-     </item>
      <item row="3" column="0">
       <widget class="QLabel" name="Quantity_Label">
        <property name="text">
@@ -104,28 +144,8 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="Quantity_SpinBox"/>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="MaxStock_Label">
-       <property name="text">
-        <string>最大库存</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QSpinBox" name="MaxStock_SpinBox"/>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="MinStock_Label">
-       <property name="text">
-        <string>最小库存</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QSpinBox" name="MinStock_SpinBox"/>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="Name_LineEdit"/>
      </item>
     </layout>
    </widget>

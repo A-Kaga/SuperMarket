@@ -28,6 +28,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.login.Login_PushButton_Submit.clicked.connect(self.LoginCheck)
         self.menu.WareRegister_PushButton.clicked.connect(self.wareRegister.show)
 
+        self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
+
+
     def LoginCheck(self):
     # 检查登录信息
         user_name = self.login.Login_LineEdit_UserName.text()
@@ -48,6 +51,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.login.Login_LineEdit_UserName.clear()
             self.login.Login_LineEdit_Password.clear()
 
+    def Register_DataClear(self):
+        self.wareRegister.Name_LineEdit.clear()
+        self.wareRegister.ID_LineEdit.clear()
+        self.wareRegister.Format_LineEdit.clear()
+        self.wareRegister.Quantity_SpinBox.clear()
+        self.wareRegister.MaxStock_SpinBox.clear()
+        self.wareRegister.MinStock_SpinBox.clear()
+
+    def Register_Action(self):
+        db = function.connect_database()
+        cursor = db.cursor()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

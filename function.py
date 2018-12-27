@@ -14,3 +14,6 @@ def connect_database():
                            user='root',
                            password='ctj20100030928',
                            database='supermarket')
+
+def ware_register():
+    pass
