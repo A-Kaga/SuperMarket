@@ -2,11 +2,6 @@
 from PyQt5.QtWidgets import QApplication, QDialog
 from QtUI.Ui_LoginErrorWindow import *
 
-'''
-Login Account
-Id = AKaga
-Password = 123456
-'''
 
 class LoginErrorWindow(QDialog, Ui_LoginErrorWindow):
     def __init__(self, parent=None):
