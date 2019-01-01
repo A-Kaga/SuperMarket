@@ -21,14 +21,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.login = LoginWin.LoginWindow() # 登录界面
         self.login_error = LoginErrorWin.LoginErrorWindow() # 账号密码不匹配提示界面
         self.menu = MenuWin.MenuWindow()  # 功能界面
-        self.wareRegister = WareRegisterWin.WareRegisterWindow() #商品信息注册界面
+        self.wareRegister = WareRegisterWin.WareRegisterWindow()  #商品信息注册界面
+        
+        '''
+        注意！！！
+        这里跳过了登录操作
+        上线前记得修改！！！
 
-        self.Login_PushButton.clicked.connect(self.login.show)
+        把menu.show()改成LoginCheck
+        '''
+
+        self.Login_PushButton.clicked.connect(self.menu.show)
         self.Login_PushButton.clicked.connect(self.close)
+        
         self.login.Login_PushButton_Submit.clicked.connect(self.LoginCheck)
         self.menu.WareRegister_PushButton.clicked.connect(self.wareRegister.show)
 
         self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
+        self.wareRegister.Submit_PushButton.clicked.connect(self.Register_Action)
 
 
     def LoginCheck(self):
@@ -56,12 +66,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.wareRegister.ID_LineEdit.clear()
         self.wareRegister.Format_LineEdit.clear()
         self.wareRegister.Quantity_SpinBox.clear()
+        self.wareRegister.PurchasePrice_LineEdit.clear()
+        self.wareRegister.SellPrice_LineEdit.clear()
         self.wareRegister.MaxStock_SpinBox.clear()
         self.wareRegister.MinStock_SpinBox.clear()
 
     def Register_Action(self):
+        ware_data = []
+        ware_data.append(self.wareRegister.Name_LineEdit.text())
+        ware_data.append(int(self.wareRegister.ID_LineEdit.text()))
+        ware_data.append(int(self.wareRegister.Format_LineEdit.text()))
+        ware_data.append(int(self.wareRegister.Quantity_SpinBox.text()))
+        ware_data.append(int(self.wareRegister.PurchasePrice_LineEdit.text()))
+        ware_data.append(int(self.wareRegister.SellPrice_LineEdit.text()))
+        ware_data.append(int(self.wareRegister.MaxStock_SpinBox.text()))
+        ware_data.append(int(self.wareRegister.MinStock_SpinBox.text()))
+
+        insert_sql = """INSERT INTO ware_data
+                     (name, ware_id, format, quantity, purchase_price, sell_price, max_stock, min_stock) 
+                     VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"""
         db = function.connect_database()
         cursor = db.cursor()
+        while True:
+            try:
+                cursor.execute(insert_sql, ware_data)
+            except Exception as e:
+                print(e)
+                db.rollback()
+                self.Register_DataClear()
+                break
+            else:
+                db.commit()
+                break
+        cursor.close()
+        db.close()
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
