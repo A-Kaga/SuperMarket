@@ -100,6 +100,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 break
         cursor.close()
         db.close()
+        '''
+        下一步：
+        完善商品注册功能
+        创建错误提示（重复id，商品信息不完全，商品数据格式错误balabala）窗口
+        创建录入成功窗口
+        '''
         
 
 if __name__ == '__main__':
