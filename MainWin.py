@@ -161,8 +161,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         purchase_data.append(self.purchaseRegister.WareID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.Quantity_SpinBox.text())
 
-        print(self.purchaseRegister.dateTimeEdit.text())
-
         insert_sql = """
                      INSERT INTO purchase_data
                      (date_time, purchase_id, ware_id, quantity) 
