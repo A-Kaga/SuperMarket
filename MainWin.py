@@ -28,6 +28,7 @@ import MenuWin
 import WareRegisterWin
 import RegisterErrorDialog
 import PurchaseRegisterWin
+import SaleRegisterWin
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -39,7 +40,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menu = MenuWin.MenuWindow()  # 功能界面
         self.wareRegister = WareRegisterWin.WareRegisterWindow()  #商品信息注册界面
         self.registerError = RegisterErrorDialog.RegisterErrorDialog() #注册内容出错回滚界面
-        self.purchaseRegister = PurchaseRegisterWin.PurchaseRegisterWindow()
+        self.purchaseRegister = PurchaseRegisterWin.PurchaseRegisterWindow() #进货登记界面
+        self.saleRegister = SaleRegisterWin.SaleRegisterWindow() #销货登记界面
 
         '''
         注意！！！
@@ -56,6 +58,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.menu.WareRegister_PushButton.clicked.connect(self.wareRegister.show)
         self.menu.PurchaseRegister_PushButton.clicked.connect(self.purchaseRegister.show)
+        self.menu.SaleRegister_PushButton.clicked.connect(self.saleRegister.show)
 
         self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
         self.wareRegister.Submit_PushButton.clicked.connect(self.Register_Action)
@@ -64,6 +67,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.purchaseRegister.Clear_PushButton.clicked.connect(self.PurchaseRegister_DataClear)
         self.purchaseRegister.Submit_PushButton.clicked.connect(self.PurchaseRegister_Action)
+
+        self.saleRegister.Clear_PushButton.clicked.connect(self.SaleRegister_DataClear)
+        self.saleRegister.Submit_PushButton.clicked.connect(self.SaleRegister_Action)
         
 
 
@@ -96,6 +102,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.wareRegister.SellPrice_LineEdit.clear()
         self.wareRegister.MaxStock_SpinBox.clear()
         self.wareRegister.MinStock_SpinBox.clear()
+
 
     def Register_Action(self):
         ware_data = []
@@ -178,6 +185,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 break
             else:
                 db.commit()
+                self.purchaseRegister.close()
                 break
         cursor.close()
         db.close()
@@ -188,6 +196,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         本工作可待主要功能大致完善后再进行
         '''
+
+
+    def SaleRegister_DataClear(self):
+        self.saleRegister.dateTimeEdit.clear()
+        '''
+        注意：
+        这里，dataTimeEdit可能不应该用clear()方式
+        清除数据时，会出现很奇怪的错误
+        待日后完善
+        '''
+        self.saleRegister.SaleID_LineEdit.clear()
+        self.saleRegister.WareID_LineEdit.clear()
+        self.saleRegister.Quantity_SpinBox.clear()
+        
+
+    def SaleRegister_Action(self):
+        sale_data = []
+        # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
+        datetime = self.saleRegister.dateTimeEdit.text().replace(' ', '').replace('-', '')
+        sale_data.append(datetime)
+        sale_data.append(self.saleRegister.SaleID_LineEdit.text())
+        sale_data.append(self.saleRegister.WareID_LineEdit.text())
+        sale_data.append(self.saleRegister.Quantity_SpinBox.text())
+
+        insert_sql = """
+                     INSERT INTO sale_data
+                     (date_time, sale_id, ware_id, quantity) 
+                     VALUES(%s,%s,%s,%s)
+                     """
+        db = function.connect_database()
+        cursor = db.cursor()
+        while True:
+            try:
+                cursor.execute(insert_sql, sale_data)
+            except Exception as e:
+                print(e)
+                db.rollback()
+                self.SaleRegister_DataClear
+                break
+            else:
+                db.commit()
+                self.saleRegister.close()
+                break
+        cursor.close()
+        db.close()
 
 
 if __name__ == '__main__':
