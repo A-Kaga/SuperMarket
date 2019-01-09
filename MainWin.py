@@ -1,14 +1,15 @@
 '''
 下一步工作：
-销货登记功能实现 ←
+销货登记功能实现 √
 销售查询功能实现
-库存查询功能实现
+库存查询功能实现 √
 
 相关功能提示窗口完善
 
 系统测试
 
 代码精简
+--数据库操作独立
 
 文档书写
 '''
@@ -29,6 +30,9 @@ import WareRegisterWin
 import RegisterErrorDialog
 import PurchaseRegisterWin
 import SaleRegisterWin
+import StockSearchWin
+import StockDia
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -41,7 +45,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.wareRegister = WareRegisterWin.WareRegisterWindow()  #商品信息注册界面
         self.registerError = RegisterErrorDialog.RegisterErrorDialog() #注册内容出错回滚界面
         self.purchaseRegister = PurchaseRegisterWin.PurchaseRegisterWindow() #进货登记界面
-        self.saleRegister = SaleRegisterWin.SaleRegisterWindow() #销货登记界面
+        self.saleRegister = SaleRegisterWin.SaleRegisterWindow()  #销货登记界面
+        self.stockSearch = StockSearchWin.StockSearchWindow() #库存查询界面
+        self.stockDia = StockDia.StockDialog() #库存信息提示框
 
         '''
         注意！！！
@@ -59,6 +65,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menu.WareRegister_PushButton.clicked.connect(self.wareRegister.show)
         self.menu.PurchaseRegister_PushButton.clicked.connect(self.purchaseRegister.show)
         self.menu.SaleRegister_PushButton.clicked.connect(self.saleRegister.show)
+        self.menu.StockSearch_PushButton.clicked.connect(self.stockSearch.show)
 
         self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
         self.wareRegister.Submit_PushButton.clicked.connect(self.Register_Action)
@@ -71,6 +78,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saleRegister.Clear_PushButton.clicked.connect(self.SaleRegister_DataClear)
         self.saleRegister.Submit_PushButton.clicked.connect(self.SaleRegister_Action)
         
+        self.stockSearch.pushButton.clicked.connect(self.StockSearch)
 
 
     def LoginCheck(self):
@@ -241,6 +249,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 break
         cursor.close()
         db.close()
+
+     
+    def StockSearch(self):
+        ID = self.stockSearch.WareID_LineEdit.text()
+        search_sql = """
+                 SELECT * FROM WARE_DATA 
+                 WHERE WARE_ID = %s
+                 """
+        db = function.connect_database()
+        cursor = db.cursor()
+        while True:
+            try:
+                cursor.execute(search_sql, ID)
+            except Exception as e:
+                print(e)
+                db.rollback()
+                break
+            else:
+                data = cursor.fetchone()
+                if data == None:
+                    self.stockSearch.WareID_LineEdit.clear()
+                    break
+                else:
+                    self.stockDia.show()
+                    self.stockDia.WareName.setText(str(data[0]))
+                    self.stockDia.WareID.setText(str(data[1]))
+                    self.stockDia.Stock.setText(str(data[3]))
+                    break
+        cursor.close()
+        db.close()
+        '''
+        未完成：
+        相关提示框
+        '''
 
 
 if __name__ == '__main__':
