@@ -16,8 +16,9 @@
 import sys
 import function
 import pymysql
+import datetime
 # from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem
 from QtUI.Ui_MainWindow import Ui_MainWindow
 
 import QtUI.Ui_LoginWindow
@@ -32,6 +33,7 @@ import PurchaseRegisterWin
 import SaleRegisterWin
 import StockSearchWin
 import StockDia
+import SaleSearchWin
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -48,6 +50,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saleRegister = SaleRegisterWin.SaleRegisterWindow()  #销货登记界面
         self.stockSearch = StockSearchWin.StockSearchWindow() #库存查询界面
         self.stockDia = StockDia.StockDialog() #库存信息提示框
+        self.saleSearch = SaleSearchWin.SaleSearchWindow() #销售查询界面
 
         '''
         注意！！！
@@ -66,6 +69,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menu.PurchaseRegister_PushButton.clicked.connect(self.purchaseRegister.show)
         self.menu.SaleRegister_PushButton.clicked.connect(self.saleRegister.show)
         self.menu.StockSearch_PushButton.clicked.connect(self.stockSearch.show)
+        self.menu.SaleSearch_PushButton.clicked.connect(self.saleSearch.show)
 
         self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
         self.wareRegister.Submit_PushButton.clicked.connect(self.Register_Action)
@@ -79,6 +83,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saleRegister.Submit_PushButton.clicked.connect(self.SaleRegister_Action)
         
         self.stockSearch.pushButton.clicked.connect(self.StockSearch)
+        
+        self.saleSearch.pushButton.clicked.connect(self.SaleSearch_Action)
 
 
     def LoginCheck(self):
@@ -155,7 +161,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
 
     def PurchaseRegister_DataClear(self):
-        self.purchaseRegister.dateTimeEdit.clear()
+        self.purchaseRegister.dateEdit.clear()
         '''
         注意：
         这里，dataTimeEdit可能不应该用clear()方式
@@ -170,7 +176,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def PurchaseRegister_Action(self):
         purchase_data = []
         # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
-        datetime = self.purchaseRegister.dateTimeEdit.text().replace(' ', '').replace('-', '')
+        print(self.purchaseRegister.dateEdit.text())
+        datetime = self.purchaseRegister.dateEdit.text().split(' ')[0].replace('/', '')
         purchase_data.append(datetime)
         purchase_data.append(self.purchaseRegister.PurchaseID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.WareID_LineEdit.text())
@@ -207,7 +214,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def SaleRegister_DataClear(self):
-        self.saleRegister.dateTimeEdit.clear()
+        self.saleRegister.dateEdit.clear()
         '''
         注意：
         这里，dataTimeEdit可能不应该用clear()方式
@@ -222,7 +229,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def SaleRegister_Action(self):
         sale_data = []
         # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
-        datetime = self.saleRegister.dateTimeEdit.text().replace(' ', '').replace('-', '')
+        print(self.saleRegister.dateEdit.text())
+        datetime = self.saleRegister.dateEdit.text().split(' ')[0].replace('/', '')
+        datetime = self.saleRegister.dateEdit.text().replace(' ', '').replace('-', '')
         sale_data.append(datetime)
         sale_data.append(self.saleRegister.SaleID_LineEdit.text())
         sale_data.append(self.saleRegister.WareID_LineEdit.text())
@@ -283,6 +292,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         未完成：
         相关提示框
         '''
+
+
+    def SaleSearch_Action(self):
+        table = self.saleSearch.tableWidget
+        startTime = self.saleSearch.StartTime_DateEdit.date()
+        endTime = self.saleSearch.EndTime_DateEdit.date()
+        db = function.connect_database()
+        cursor = db.cursor()
+        sql = '''
+              SELECT * FROM SALE_DATA
+              WHERE DATE_TIME > %s AND DATE_TIME < %s
+              '''
+        cursor.execute(sql, (str(startTime), str(endTime)))
+        results = cursor.fetchall()
+        print('output:')
+        print(results)
+        for i in results:
+            row = table.rowCount()
+            table.setRowCount(row + 1)
+            date = i[0].strftime("%Y-%m-%d")
+            table.setItem(row, 0, QTableWidgetItem(str(i[1])))
+            table.setItem(row, 1, QTableWidgetItem(date))
+            table.setItem(row, 2, QTableWidgetItem(str(i[2])))
+            table.setItem(row, 3, QTableWidgetItem(str(i[3])))
 
 
 if __name__ == '__main__':
