@@ -1,8 +1,10 @@
 '''
 下一步工作：
 销货登记功能实现 √
-销售查询功能实现
+销售查询功能实现 √
 库存查询功能实现 √
+
+库存连接
 
 相关功能提示窗口完善
 
@@ -296,18 +298,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def SaleSearch_Action(self):
         table = self.saleSearch.tableWidget
-        startTime = self.saleSearch.StartTime_DateEdit.date()
-        endTime = self.saleSearch.EndTime_DateEdit.date()
+        startTime = self.saleSearch.StartTime_DateEdit.date().toString('yyyy-mm-dd')
+        endTime = self.saleSearch.EndTime_DateEdit.date().toString('yyyy-mm-dd')
         db = function.connect_database()
         cursor = db.cursor()
         sql = '''
               SELECT * FROM SALE_DATA
               WHERE DATE_TIME > %s AND DATE_TIME < %s
               '''
-        cursor.execute(sql, (str(startTime), str(endTime)))
+        cursor.execute(sql, (startTime, endTime))
         results = cursor.fetchall()
-        print('output:')
-        print(results)
         for i in results:
             row = table.rowCount()
             table.setRowCount(row + 1)
@@ -316,6 +316,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             table.setItem(row, 1, QTableWidgetItem(date))
             table.setItem(row, 2, QTableWidgetItem(str(i[2])))
             table.setItem(row, 3, QTableWidgetItem(str(i[3])))
+    '''
+    未完成：
+    美观性
+    查询失败界面
+    '''
 
 
 if __name__ == '__main__':

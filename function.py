@@ -15,5 +15,23 @@ def connect_database():
                            password='ctj20100030928',
                            database='supermarket')
 
-def ware_register():
-    pass
+def ware_check(id, amount, cursor):
+    quantity_sql =
+    """
+    SELECT QUANTITY FROM WARE_DATA
+    """
+    min_sql =
+    """
+    SELECT MIN_STOCK FROM WARE_DATA
+    """
+    max_sql =
+    """
+    SELECT MAX_STOCK FROM WARE_DATA
+    """
+    cursor.execute(quantity_sql)
+    quantity = cursor.fetchone()
+
+    '''
+    未完成：
+    数据连接
+    '''
