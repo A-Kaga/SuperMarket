@@ -1,11 +1,6 @@
 import pymysql
 
 
-'''
-This file contains some function:
-connect_database()----connect with the database supermarket
-'''
-
 def connect_database():
     # my_id = input('User Account: ')
     # my_password = input('Password: ')
@@ -15,6 +10,7 @@ def connect_database():
                            password='ctj20100030928',
                            database='supermarket')
 
+'''
 def ware_check(id, amount, cursor):
     quantity_sql =
     """
@@ -30,8 +26,43 @@ def ware_check(id, amount, cursor):
     """
     cursor.execute(quantity_sql)
     quantity = cursor.fetchone()
+'''
 
+
+def stock_update(id, mode, amount):
+    db = connect_database()
+    cursor = db.cursor()
+    search_sql = """
+                 SELECT MIN_STOCK, MAX_STOCK
+                 FROM WARE_DATA
+                 WHERE WARE_ID = %s
+                 """
+    stock_sql = """
+                SELECT AMOUNT
+                FROM STOCK_DATA
+                WHERE WARE_ID = %s
+                """
+    update_sql = """
+                 UPDATE STOCK_DATA
+                 SET AMOUNT = %s
+                 WHERE WARE_ID = %s 
+                 """
+    
+    cursor.execute(search_sql, id)
+    stock_range = cursor.fetchone()
+    cursor.execute(stock_sql, id)
+    stock = cursor.fetchone()
+    modified_amount = int(mode) * int(amount) + int(stock[0])
+    print(modified_amount)
+
+    if modified_amount < stock_range[0]:
+        print("少了")
+    elif modified_amount > stock_range[1]:
+        print("多了")
+    else:
+        sql_data = [modified_amount, id]
+        cursor.execute(update_sql, sql_data)
+        db.commit()
     '''
-    未完成：
-    数据连接
+    这里错误处理不过关！！！
     '''

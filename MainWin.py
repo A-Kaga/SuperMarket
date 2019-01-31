@@ -4,7 +4,9 @@
 销售查询功能实现 √
 库存查询功能实现 √
 
+进货处理时的错误处理（优先！！！）
 库存连接
+重构
 
 相关功能提示窗口完善
 
@@ -15,6 +17,7 @@
 
 文档书写
 '''
+
 import sys
 import function
 import pymysql
@@ -136,11 +139,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                      (name, ware_id, format, quantity, purchase_price, sell_price, max_stock, min_stock) 
                      VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
                      """
+        stock_sql = """
+                    INSERT INTO stock_data
+                     (ware_id, amount) 
+                     VALUES(%s,0)
+                    """
         db = function.connect_database()
         cursor = db.cursor()
         while True:
             try:
                 cursor.execute(insert_sql, ware_data)
+                cursor.execute(stock_sql,ware_data[1])
             except Exception as e:
                 print(e)
                 db.rollback()
@@ -152,6 +161,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 break
         cursor.close()
         db.close()
+        self.wareRegister.close()
         '''
         未完成：
         完善商品注册功能
@@ -184,6 +194,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         purchase_data.append(self.purchaseRegister.PurchaseID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.WareID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.Quantity_SpinBox.text())
+
+        function.stock_update(purchase_data[2], int(1), int(purchase_data[3]))
 
         insert_sql = """
                      INSERT INTO purchase_data
