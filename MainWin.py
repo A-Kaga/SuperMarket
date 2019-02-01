@@ -5,15 +5,14 @@
 库存查询功能实现 √
 
 进货处理时的错误处理（优先！！！）
-库存连接
-重构
+数据库的设计
+重构，提高各功能复用性
 
 相关功能提示窗口完善
 
 系统测试
 
 代码精简
---数据库操作独立
 
 文档书写
 '''
@@ -39,6 +38,7 @@ import SaleRegisterWin
 import StockSearchWin
 import StockDia
 import SaleSearchWin
+import ErrorDia
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -55,7 +55,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saleRegister = SaleRegisterWin.SaleRegisterWindow()  #销货登记界面
         self.stockSearch = StockSearchWin.StockSearchWindow() #库存查询界面
         self.stockDia = StockDia.StockDialog() #库存信息提示框
-        self.saleSearch = SaleSearchWin.SaleSearchWindow() #销售查询界面
+        self.saleSearch = SaleSearchWin.SaleSearchWindow()  #销售查询界面
+        self.errorDia = ErrorDia.ErrorDialog()
 
         '''
         注意！！！
@@ -78,6 +79,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.wareRegister.Clear_PushButton.clicked.connect(self.Register_DataClear)
         self.wareRegister.Submit_PushButton.clicked.connect(self.Register_Action)
+
+        self.errorDia.pushButton.clicked.connect(self.errorDia.close)
 
         # self.registerError.buttonBox.clicked.connect
 
@@ -180,7 +183,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         清除数据时，会出现很奇怪的错误
         待日后完善
         '''
-        self.purchaseRegister.PurchaseID_LineEdit.clear()
         self.purchaseRegister.WareID_LineEdit.clear()
         self.purchaseRegister.Quantity_SpinBox.clear()
 
@@ -188,34 +190,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def PurchaseRegister_Action(self):
         purchase_data = []
         # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
-        print(self.purchaseRegister.dateEdit.text())
         datetime = self.purchaseRegister.dateEdit.text().split(' ')[0].replace('/', '')
         purchase_data.append(datetime)
-        purchase_data.append(self.purchaseRegister.PurchaseID_LineEdit.text())
+        # purchase_data.append(self.purchaseRegister.PurchaseID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.WareID_LineEdit.text())
         purchase_data.append(self.purchaseRegister.Quantity_SpinBox.text())
 
-        function.stock_update(purchase_data[2], int(1), int(purchase_data[3]))
-
         insert_sql = """
                      INSERT INTO purchase_data
-                     (date_time, purchase_id, ware_id, quantity) 
-                     VALUES(%s,%s,%s,%s)
+                     (date_time, ware_id, quantity) 
+                     VALUES(%s,%s,%s)
                      """
         db = function.connect_database()
         cursor = db.cursor()
-        while True:
+
+        if function.ware_id_check(purchase_data[1]) != 1:
+            self.errorDia.ErrorMessage.setText("商品代码不存在！请修改商品代码")
+            self.errorDia.show()
+        elif function.stock_update(purchase_data[1], int(1), int(purchase_data[2])) != 1:
+            self.errorDia.ErrorMessage.setText("采购后库存大于上限,请修改采购量!")
+            self.errorDia.show()
+        else:
             try:
                 cursor.execute(insert_sql, purchase_data)
             except Exception as e:
-                print(e)
+                self.errorDia.ErrorMessage.setText(str(e))
+                self.errorDia.show()
                 db.rollback()
-                self.PurchaseRegister_DataClear
-                break
+                # self.PurchaseRegister_DataClear
             else:
                 db.commit()
                 self.purchaseRegister.close()
-                break
+
+        
         cursor.close()
         db.close()
         '''
@@ -243,7 +250,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def SaleRegister_Action(self):
         sale_data = []
         # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
-        print(self.saleRegister.dateEdit.text())
         datetime = self.saleRegister.dateEdit.text().split(' ')[0].replace('/', '')
         datetime = self.saleRegister.dateEdit.text().replace(' ', '').replace('-', '')
         sale_data.append(datetime)

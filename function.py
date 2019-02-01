@@ -1,5 +1,10 @@
 import pymysql
 
+'''
+存在的问题：
+sql语句能不能集中保存，直接调用，现目前复用性不高
+尽可能提高各功能的复用性
+'''
 
 def connect_database():
     # my_id = input('User Account: ')
@@ -29,6 +34,20 @@ def ware_check(id, amount, cursor):
 '''
 
 
+def ware_id_check(id):
+    db = connect_database()
+    cursor = db.cursor()
+    search_sql = """
+                 SELECT 1
+                 FROM WARE_DATA
+                 WHERE WARE_ID = %s
+                 LIMIT 1
+                 """
+    
+    row = cursor.execute(search_sql, id)
+    return row
+
+
 def stock_update(id, mode, amount):
     db = connect_database()
     cursor = db.cursor()
@@ -53,16 +72,13 @@ def stock_update(id, mode, amount):
     cursor.execute(stock_sql, id)
     stock = cursor.fetchone()
     modified_amount = int(mode) * int(amount) + int(stock[0])
-    print(modified_amount)
 
     if modified_amount < stock_range[0]:
-        print("少了")
+        return 0
     elif modified_amount > stock_range[1]:
-        print("多了")
+        return 0
     else:
         sql_data = [modified_amount, id]
         cursor.execute(update_sql, sql_data)
         db.commit()
-    '''
-    这里错误处理不过关！！！
-    '''
+        return 1

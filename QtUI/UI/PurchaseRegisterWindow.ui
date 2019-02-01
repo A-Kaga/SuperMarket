@@ -67,9 +67,6 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="PurchaseID_LineEdit"/>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="Time_Label">
        <property name="text">
@@ -78,31 +75,18 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="PurchaseID_Label">
-       <property name="text">
-        <string>进货编号</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="WareID_LineEdit"/>
-     </item>
-     <item row="2" column="0">
       <widget class="QLabel" name="WareID_Label">
        <property name="text">
         <string>商品代码</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="2" column="0">
       <widget class="QLabel" name="Quantity_Label">
        <property name="text">
         <string>进货数量</string>
        </property>
       </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="Quantity_SpinBox"/>
      </item>
      <item row="0" column="1">
       <widget class="QDateEdit" name="dateEdit">
@@ -110,6 +94,12 @@ p, li { white-space: pre-wrap; }
         <string>yyyy/MM/dd dddd</string>
        </property>
       </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="Quantity_SpinBox"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="WareID_LineEdit"/>
      </item>
     </layout>
    </widget>
