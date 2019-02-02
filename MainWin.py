@@ -4,7 +4,7 @@
 销售查询功能实现 √
 库存查询功能实现 √
 
-进货处理时的错误处理（优先！！！）
+进货处理时的错误处理（优先！！！）√
 数据库的设计
 重构，提高各功能复用性
 
@@ -56,14 +56,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stockSearch = StockSearchWin.StockSearchWindow() #库存查询界面
         self.stockDia = StockDia.StockDialog() #库存信息提示框
         self.saleSearch = SaleSearchWin.SaleSearchWindow()  #销售查询界面
-        self.errorDia = ErrorDia.ErrorDialog()
+        self.errorDia = ErrorDia.ErrorDialog() #错误提示框
 
         '''
         注意！！！
         这里跳过了登录操作
         上线前记得修改！！！
 
-        把menu.show()改成LoginCheck
+        把menu改成login
         '''
 
         self.Login_PushButton.clicked.connect(self.menu.show)
@@ -82,8 +82,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.errorDia.pushButton.clicked.connect(self.errorDia.close)
 
-        # self.registerError.buttonBox.clicked.connect
-
         self.purchaseRegister.Clear_PushButton.clicked.connect(self.PurchaseRegister_DataClear)
         self.purchaseRegister.Submit_PushButton.clicked.connect(self.PurchaseRegister_Action)
 
@@ -92,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.stockSearch.pushButton.clicked.connect(self.StockSearch)
         
-        self.saleSearch.pushButton.clicked.connect(self.SaleSearch_Action)
+        self.saleSearch.pushButton.clicked.connect(self.SaleSearch)
 
 
     def LoginCheck(self):
@@ -103,17 +101,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         db = function.connect_database()
         cursor = db.cursor()
         check_sql = 'SELECT PASSWORD FROM ADMIN WHERE ID=%s'
-        cursor.execute(check_sql, user_name)
+        row = cursor.execute(check_sql, user_name)
         result = cursor.fetchone()
-    # 这里有问题：
-    # 如果账号不在数据库内，会跳 TypeError: 'NoneType' object is not subscriptable
-        if str(result[0]) == str(password):
+        if row == 0:
+            self.errorDia.ErrorMessage.setText("账号不存在，请联系管理员")
+            self.errorDia.show()
+        elif str(result[0]) != str(password):
+            self.errorDia.ErrorMessage.setText("密码错误，重新输入")
+            self.errorDia.show()
+        else:
             self.menu.show()
             self.login.close()
-        else:
-            self.login_error.show()
-            self.login.Login_LineEdit_UserName.clear()
-            self.login.Login_LineEdit_Password.clear()
+            
 
     def Register_DataClear(self):
         self.wareRegister.Name_LineEdit.clear()
@@ -242,7 +241,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         清除数据时，会出现很奇怪的错误
         待日后完善
         '''
-        self.saleRegister.SaleID_LineEdit.clear()
         self.saleRegister.WareID_LineEdit.clear()
         self.saleRegister.Quantity_SpinBox.clear()
         
@@ -251,36 +249,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sale_data = []
         # 对从qt中收到的datetime数据进行转换，以适应数据库格式要求
         datetime = self.saleRegister.dateEdit.text().split(' ')[0].replace('/', '')
-        datetime = self.saleRegister.dateEdit.text().replace(' ', '').replace('-', '')
         sale_data.append(datetime)
-        sale_data.append(self.saleRegister.SaleID_LineEdit.text())
         sale_data.append(self.saleRegister.WareID_LineEdit.text())
         sale_data.append(self.saleRegister.Quantity_SpinBox.text())
 
         insert_sql = """
                      INSERT INTO sale_data
-                     (date_time, sale_id, ware_id, quantity) 
-                     VALUES(%s,%s,%s,%s)
+                     (date_time, ware_id, quantity) 
+                     VALUES(%s,%s,%s)
                      """
         db = function.connect_database()
         cursor = db.cursor()
-        while True:
+        
+        if function.ware_id_check(sale_data[1]) != 1:
+            self.errorDia.ErrorMessage.setText("商品代码不存在！请修改商品代码")
+            self.errorDia.show()
+        elif function.stock_update(sale_data[1], int(-1), int(sale_data[2])) != 1:
+            self.errorDia.ErrorMessage.setText("采购后库存大于上限,请修改采购量!")
+            self.errorDia.show()
+        else:
             try:
                 cursor.execute(insert_sql, sale_data)
             except Exception as e:
-                print(e)
+                self.errorDia.ErrorMessage.setText(str(e))
+                self.errorDia.show()
                 db.rollback()
-                self.SaleRegister_DataClear
-                break
             else:
                 db.commit()
                 self.saleRegister.close()
-                break
-        cursor.close()
-        db.close()
+
 
      
     def StockSearch(self):
+        table = self.stockSearch.tableWidget
+        
         ID = self.stockSearch.WareID_LineEdit.text()
         search_sql = """
                  SELECT * FROM WARE_DATA 
@@ -314,7 +316,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         '''
 
 
-    def SaleSearch_Action(self):
+    def SaleSearch(self):
         table = self.saleSearch.tableWidget
         startTime = self.saleSearch.StartTime_DateEdit.date().toString('yyyy-mm-dd')
         endTime = self.saleSearch.EndTime_DateEdit.date().toString('yyyy-mm-dd')

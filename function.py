@@ -15,24 +15,6 @@ def connect_database():
                            password='ctj20100030928',
                            database='supermarket')
 
-'''
-def ware_check(id, amount, cursor):
-    quantity_sql =
-    """
-    SELECT QUANTITY FROM WARE_DATA
-    """
-    min_sql =
-    """
-    SELECT MIN_STOCK FROM WARE_DATA
-    """
-    max_sql =
-    """
-    SELECT MAX_STOCK FROM WARE_DATA
-    """
-    cursor.execute(quantity_sql)
-    quantity = cursor.fetchone()
-'''
-
 
 def ware_id_check(id):
     db = connect_database()
@@ -82,3 +64,22 @@ def stock_update(id, mode, amount):
         cursor.execute(update_sql, sql_data)
         db.commit()
         return 1
+
+
+    def stock_display(table):
+        db = function.connect_database()
+        cursor = db.cursor()
+        sql = '''
+              SELECT * FROM WARE_DATA
+              WHERE DATE_TIME > %s AND DATE_TIME < %s
+              '''
+        cursor.execute(sql, (startTime, endTime))
+        results = cursor.fetchall()
+        for i in results:
+            row = table.rowCount()
+            table.setRowCount(row + 1)
+            date = i[0].strftime("%Y-%m-%d")
+            table.setItem(row, 0, QTableWidgetItem(str(i[1])))
+            table.setItem(row, 1, QTableWidgetItem(date))
+            table.setItem(row, 2, QTableWidgetItem(str(i[2])))
+            table.setItem(row, 3, QTableWidgetItem(str(i[3])))
